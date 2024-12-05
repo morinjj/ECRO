@@ -1,5 +1,5 @@
 const zwiftIdInput = document.getElementById('zwift-id-input');
-const form = document.querySelector('form');
+const form = document.querySelector('zwift-id-lookup-form');
 
 form.addEventListener('submit', (event) => {
     event.preventDefault();
