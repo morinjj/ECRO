@@ -15,8 +15,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
   
         auth.createUserWithEmailAndPassword(email, password)
           .then((userCredential) => {
-            // No need to create a profile here, it will be handled in onAuthStateChanged
-            console.log('User signed up:', userCredential.user);          
+            console.log('User signed up:', userCredential.user);
           })
           .catch((error) => {
             console.error('Sign up error:', error.code, error.message);
@@ -34,12 +33,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
   
         auth.signInWithPopup(provider)
           .then((result) => {
-            // No need to create a profile here, it will be handled in onAuthStateChanged
-            console.log('User signed in with Google:', result.user);          
+            console.log('User signed in with Google:', result.user);
           })
           .catch((error) => {
             console.error('Google Sign-In error:', error.code, error.message);
-            // Handle error (e.g., display an error message)
+            // Handle the error, e.g., display an error message
           });
       });
     }
@@ -47,7 +45,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     // --- Protect member-only pages and create user profile if needed ---
     firebase.auth().onAuthStateChanged((user) => {
   
-      if (window.location.pathname !== '/auth/sign-up') { 
+      if (window.location.pathname !== '/auth/sign-up') {
         if (user) {
           console.log("User is signed in:", user.uid);
   
@@ -56,13 +54,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
           userProfilesRef.doc(user.uid).get()
             .then((doc) => {
               if (!doc.exists) {
+                console.log("User profile does not exist, creating...");
                 createUserProfile(user)
                   .then(() => {
                     console.log('User profile created successfully!');
                   })
                   .catch((error) => {
                     console.error('Error creating user profile:', error);
-                    // Handle the error 
+                    // Handle the error, e.g., display an error message
                   });
               } else {
                 console.log('User profile already exists');
@@ -70,12 +69,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
             })
             .catch((error) => {
               console.error('Error checking for user profile:', error);
-              // Handle the error
+              // Handle the error, e.g., display an error message
             });
   
         } else {
           console.log("User is signed out, redirecting to login");
-          window.location.href = "/auth/sign-up"; 
+          window.location.href = "/auth/sign-up";
         }
       }
     });
