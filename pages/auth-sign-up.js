@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     signupForm.addEventListener('submit', (event) => {
         event.preventDefault();              // Prevent default form submission
-        event.stopImmediatePropagation();   // Prevent Webflow interference
+        event.stopImmediatePropagation();    // Prevent Webflow interference
         errorMessage.textContent = '';       // Clear any previous error messages
 
         const email = document.getElementById('email').value;
@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 const user = userCredential.user;
                 console.log('User signed up:', user);
                 // Redirect to the onboarding page
-                window.location.href = 'https://uecro-453e8c.webflow.io/rider/onboarding';
+                window.location.href = 'https://ecro.webflow.io/rider/onboarding';
             })
             .catch((error) => {
                 const errorCode = error.code;
@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 const user = result.user;
                 console.log('User signed in with Google:', user);
                 // Redirect to the onboarding page
-                window.location.href = 'https://uecro-453e8c.webflow.io/rider/onboarding';
+                window.location.href = 'https://ecro.webflow.io/rider/onboarding';
             })
             .catch((error) => {
                 const errorCode = error.code;
