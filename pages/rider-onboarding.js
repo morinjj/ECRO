@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
       console.log("Fetching data...");
 
       // Call the API function from the separate file
-      getZRAppRiderData(zwiftId)
+      getZrappRiderData(zwiftId)
         .then(result => {
           console.log('API Response:', result);
 

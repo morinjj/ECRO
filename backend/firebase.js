@@ -1,5 +1,3 @@
-// firebase.js
-
 function getRiderData(documentId) {
   const userProfilesRef = db.collection('userProfiles');
   return userProfilesRef.doc(documentId).get()
@@ -22,29 +20,14 @@ function createUserProfile(user) {
     userId: user.uid,
     email: user.email,
     createDate: firebase.firestore.FieldValue.serverTimestamp(),
-    updatedDate: firebase.firestore.FieldValue.serverTimestamp()
+    updatedDate: firebase.firestore.FieldValue.serverTimestamp(),
+    zwiftId: null // Set zwiftId to null initially
   };
 
   const userProfilesRef = firebase.firestore().collection('userProfiles');
   return userProfilesRef.doc(user.uid).set(userProfile);
 }
 
-function updateUserProfileWithZrappData(userId, zrappData) {
-  const userProfilesRef = firebase.firestore().collection('userProfiles');
-
-  const updatedData = {
-    zwiftId: zrappData.riderId,
-    name: zrappData.name,
-    country: zrappData.country,
-    // ... other fields from zrappData ...
-    updatedDate: firebase.firestore.FieldValue.serverTimestamp(),
-    zrappUpdatedDate: firebase.firestore.FieldValue.serverTimestamp()
-  };
-
-  return userProfilesRef.doc(userId).update(updatedData);
-}
-
 // Make the functions accessible globally
 window.getRiderData = getRiderData;
 window.createUserProfile = createUserProfile;
-window.updateUserProfileWithZrappData = updateUserProfileWithZrappData;
