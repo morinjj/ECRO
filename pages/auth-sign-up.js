@@ -68,9 +68,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 // Check if zwiftId exists
                 if (profileData.zwiftId) {
   
-                  // Check if zrappDataDate is within the last 24 hours
-                  if (profileData.zrappDataDate &&
-                    (new Date() - profileData.zrappDataDate.toDate()) <= (24 * 60 * 60 * 1000)) {
+                  // Check if zrappUpdatedDate is within the last 24 hours
+                  if (profileData.zrappUpdatedDate &&
+                    (new Date() - profileData.zrappUpdatedDate.toDate()) <= (24 * 60 * 60 * 1000)) {
   
                     console.log("ZRApp data is up-to-date.");
   

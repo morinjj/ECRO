@@ -38,7 +38,7 @@ function updateUserProfileWithZrappData(userId, zrappData) {
     country: zrappData.country,
     // ... other fields from zrappData ...
     updatedDate: firebase.firestore.FieldValue.serverTimestamp(),
-    rappDataDate: firebase.firestore.FieldValue.serverTimestamp()
+    zrappUpdatedDate: firebase.firestore.FieldValue.serverTimestamp()
   };
 
   return userProfilesRef.doc(userId).update(updatedData);
