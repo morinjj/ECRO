@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     const signupForm = document.getElementById('sign-up-form');
     const errorMessage = document.getElementById('error-message');
   
-    if (signupForm) { 
+    if (signupForm) {
       signupForm.addEventListener('submit', (event) => {
         event.preventDefault();
         event.stopImmediatePropagation();
@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         auth.createUserWithEmailAndPassword(email, password)
           .then((userCredential) => {
             console.log('User signed up:', userCredential.user);
-            window.location.href = 'https://ecro.webflow.io/rider/onboarding'; 
+            window.location.href = 'https://ecro.webflow.io/rider/onboarding'; // Replace with your onboarding page URL
           })
           .catch((error) => {
             console.error('Sign up error:', error.code, error.message);
@@ -24,7 +24,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
           });
       });
     }
-  
   
     // --- Google Sign-In ---
     const googleSignInButton = document.getElementById('google-signin-button');
@@ -36,7 +35,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         auth.signInWithPopup(provider)
           .then((result) => {
             console.log('User signed in with Google:', result.user);
-            window.location.href = 'https://ecro.webflow.io/rider/onboarding'; 
+            window.location.href = 'https://ecro.webflow.io/rider/onboarding'; // Replace with your onboarding page URL
           })
           .catch((error) => {
             console.error('Google Sign-In error:', error.code, error.message);
@@ -47,19 +46,22 @@ document.addEventListener('DOMContentLoaded', (event) => {
   
     // --- Protect member-only pages ---
     firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        // User is signed in, allow access to the page
-        console.log("User is signed in:", user.uid);
+      // Check if the current page is NOT the login page
+      if (window.location.pathname !== '/auth/sign-up') {  // Replace '/login' if your login page URL is different
+        if (user) {
+          // User is signed in, allow access to the page
+          console.log("User is signed in:", user.uid);
   
-        // Optionally, you can perform actions for signed-in users here:
-        // 1. Show personalized content or elements
-        // 2. Hide login/signup elements
-        // 3. Fetch user-specific data from Firebase
+          // Optionally, you can perform actions for signed-in users here:
+          // 1. Show personalized content or elements
+          // 2. Hide login/signup elements
+          // 3. Fetch user-specific data from Firebase
   
-      } else {
-        // User is signed out, redirect to login page
-        console.log("User is signed out, redirecting to login");
-        window.location.href = "/auth/sign-up"; // Replace with your login page URL
+        } else {
+          // User is signed out, redirect to login page
+          console.log("User is signed out, redirecting to login");
+          window.location.href = "/auth/sign-up"; // Replace with your login page URL
+        }
       }
     });
   
