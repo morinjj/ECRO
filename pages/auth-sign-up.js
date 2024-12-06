@@ -16,6 +16,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
       auth.createUserWithEmailAndPassword(email, password)
         .then((userCredential) => {
           console.log('User signed up:', userCredential.user);
+          // Redirect to onboarding page after sign up
+          window.location.href = '/rider/onboarding'; 
         })
         .catch((error) => {
           console.error('Sign up error:', error.code, error.message);
@@ -34,6 +36,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
       auth.signInWithPopup(provider)
         .then((result) => {
           console.log('User signed in with Google:', result.user);
+          // Redirect to onboarding page after sign in
+          window.location.href = '/rider/onboarding'; 
         })
         .catch((error) => {
           console.error('Google Sign-In error:', error.code, error.message);

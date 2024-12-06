@@ -104,12 +104,31 @@ document.addEventListener('DOMContentLoaded', (event) => {
   // --- Confirm button logic ---
   if (confirmButton) {
     confirmButton.addEventListener('click', () => {
+
+      // Get the current user's ID
+      const userId = firebase.auth().currentUser.uid;
+
+      // Use the stored zrappRiderData to update the user profile
+      if (zrappRiderData) {
+        updateUserProfileWithZrappRiderData(userId, zrappRiderData)
+          .then(() => {
+            console.log('User profile updated with Zrapp data!');
+          })
+          .catch(error => {
+            console.error('Error updating user profile:', error);
+            // Handle the error (e.g., display an error message)
+          });
+      } else {
+        console.error("Zrapp rider data not found!");
+        // Handle the case where zrappRiderData is not available
+      }
+
+      // Existing transition logic (keep this as it is)
       transitionToSection(section2, section3);
     });
   } else {
     console.error("Confirm button not found!");
   }
-
 
 });
 
