@@ -19,6 +19,8 @@ function createUserProfile(user) {
   const userProfile = {
     userId: user.uid,
     email: user.email,
+    firstName: firstName,
+    lastName: lastName,
     createDate: firebase.firestore.FieldValue.serverTimestamp(),
     updatedDate: firebase.firestore.FieldValue.serverTimestamp(),
     zwiftId: null // Set zwiftId to null initially

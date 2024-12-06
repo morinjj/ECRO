@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         .then((userCredential) => {
           console.log('User signed up:', userCredential.user);
           // Redirect to onboarding page after sign up
-          window.location.href = '/rider/onboarding'; 
+          window.location.href = '/rider/onboarding';
         })
         .catch((error) => {
           console.error('Sign up error:', error.code, error.message);
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         .then((result) => {
           console.log('User signed in with Google:', result.user);
           // Redirect to onboarding page after sign in
-          window.location.href = '/rider/onboarding'; 
+          window.location.href = '/rider/onboarding';
         })
         .catch((error) => {
           console.error('Google Sign-In error:', error.code, error.message);
@@ -58,7 +58,17 @@ document.addEventListener('DOMContentLoaded', (event) => {
           .then((doc) => {
             if (!doc.exists) {
               console.log("User profile does not exist, creating...");
-              createUserProfile(user)
+              
+              // If the user signed in with Google, extract first and last name
+              let firstName = null;
+              let lastName = null;
+              if (user.displayName) {
+                const names = user.displayName.split(" ");
+                firstName = names[0];
+                lastName = names.slice(1).join(" ");
+              }
+
+              createUserProfile(user, firstName, lastName)
                 .then(() => {
                   console.log('User profile created successfully!');
                 })
