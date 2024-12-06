@@ -48,8 +48,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
       // Call the API function from the separate file
       getZrappRiderData(zwiftId)
-        .then(result => {
-          console.log('API Response:', result);
+        .then(zrappData => {
+          console.log('API Response:', zrappData);
 
           // --- Update fields in the page ---
           const riderNameElement = document.getElementById('rider-name-text');
@@ -59,19 +59,19 @@ document.addEventListener('DOMContentLoaded', (event) => {
           const riderZPCategoryElement = document.getElementById('rider-zp-category-text');
 
           if (riderNameElement) {
-            riderNameElement.textContent = result.name.toUpperCase();
+            riderNameElement.textContent = zrappData.name.toUpperCase();
           }
           if (riderCountryElement) {
-            riderCountryElement.textContent = result.country.toUpperCase();
+            riderCountryElement.textContent = zrappData.country.toUpperCase();
           }
           if (riderHeightElement) {
-            riderHeightElement.textContent = result.height + "cm";
+            riderHeightElement.textContent = zrappData.height + "cm";
           }
           if (riderWeightElement) {
-            riderWeightElement.textContent = result.weight + "kg";
+            riderWeightElement.textContent = zrappData.weight + "kg";
           }
           if (riderZPCategoryElement) {
-            riderZPCategoryElement.textContent = result.zpCategory;
+            riderZPCategoryElement.textContent = zrappData.zpCategory;
           }
 
           // --- Transition to section 2 after API call ---
@@ -109,8 +109,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
       const userId = firebase.auth().currentUser.uid;
 
       // Use the stored zrappRiderData to update the user profile
-      if (zrappRiderData) {
-        updateUserProfileWithZrappRiderData(userId, zrappRiderData)
+      if (zrappData) {
+        updateUserProfileWithZrappRiderData(userId, zrappData)
           .then(() => {
             console.log('User profile updated with Zrapp data!');
           })
