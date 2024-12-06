@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
       auth.createUserWithEmailAndPassword(email, password)
         .then((userCredential) => {
           console.log('User signed up:', userCredential.user);
-          // Redirect to onboarding page after sign up
           window.location.href = '/rider/onboarding';
         })
         .catch((error) => {
@@ -31,17 +30,43 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
   if (googleSignInButton) {
     googleSignInButton.addEventListener('click', () => {
+
       const provider = new firebase.auth.GoogleAuthProvider();
+      provider.addScope('profile');
 
       auth.signInWithPopup(provider)
         .then((result) => {
-          console.log('User signed in with Google:', result.user);
-          // Redirect to onboarding page after sign in
-          window.location.href = '/rider/onboarding';
+          const user = result.user;
+          console.log('User signed in with Google:', user);
+
+          const names = user.displayName.split(" ");
+          const firstName = names[0];
+          const lastName = names.slice(1).join(" ");
+          const profilePhotoUrl = user.photoURL;
+
+          const userProfilesRef = firebase.firestore().collection('userProfiles');
+          userProfilesRef.doc(user.uid).get()
+            .then((doc) => {
+              if (!doc.exists) {
+                console.log("User profile does not exist, creating...");
+                createUserProfile(user, firstName, lastName, profilePhotoUrl)
+                  .then(() => {
+                    console.log('User profile created successfully!');
+                  })
+                  .catch((error) => {
+                    console.error('Error creating user profile:', error);
+                  });
+              } else {
+                console.log('User profile already exists');
+              }
+              window.location.href = '/rider/onboarding';
+            })
+            .catch((error) => {
+              console.error('Error checking for user profile:', error);
+            });
         })
         .catch((error) => {
           console.error('Google Sign-In error:', error.code, error.message);
-          // Handle the error, e.g., display an error message
         });
     });
   }
@@ -58,31 +83,29 @@ document.addEventListener('DOMContentLoaded', (event) => {
           .then((doc) => {
             if (!doc.exists) {
               console.log("User profile does not exist, creating...");
-              
-              // If the user signed in with Google, extract first and last name
+
               let firstName = null;
               let lastName = null;
+              let profilePhotoUrl = null;
               if (user.displayName) {
                 const names = user.displayName.split(" ");
                 firstName = names[0];
                 lastName = names.slice(1).join(" ");
+                profilePhotoUrl = user.photoURL;
               }
 
-              createUserProfile(user, firstName, lastName)
+              createUserProfile(user, firstName, lastName, profilePhotoUrl)
                 .then(() => {
                   console.log('User profile created successfully!');
                 })
                 .catch((error) => {
                   console.error('Error creating user profile:', error);
-                  // Handle the error, e.g., display an error message
                 });
             } else {
               const profileData = doc.data();
 
-              // Check if zwiftId exists
               if (profileData.zwiftId) {
 
-                // Check if zrappUpdatedDate is within the last 24 hours
                 if (profileData.zrappUpdatedDate &&
                   (new Date() - profileData.zrappUpdatedDate.toDate()) <= (24 * 60 * 60 * 1000)) {
 
@@ -91,22 +114,18 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 } else {
                   console.log("Fetching ZRApp data...");
 
-                  // Call the ZRApp API
                   getZrappRiderData(profileData.zwiftId)
                     .then((zrappData) => {
-                      // Update user profile with new ZRApp data
                       updateUserProfileWithZrappRiderData(user.uid, zrappData)
                         .then(() => {
                           console.log('User profile updated with new ZRApp data!');
                         })
                         .catch((error) => {
                           console.error('Error updating user profile:', error);
-                          // Handle the error, e.g., display an error message
                         });
                     })
                     .catch((error) => {
                       console.error('Error fetching ZRApp data:', error);
-                      // Handle the error, e.g., display an error message
                     });
                 }
 
@@ -117,7 +136,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
           })
           .catch((error) => {
             console.error('Error checking for user profile:', error);
-            // Handle the error, e.g., display an error message
           });
 
       } else {

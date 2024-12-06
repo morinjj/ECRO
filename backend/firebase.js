@@ -15,15 +15,16 @@ function getRiderData(documentId) {
     });
 }
 
-function createUserProfile(user) {
+function createUserProfile(user, firstName = null, lastName = null, profilePhotoUrl = null) {
   const userProfile = {
     userId: user.uid,
     email: user.email,
     firstName: firstName,
     lastName: lastName,
+    profilePhotoUrl: profilePhotoUrl,
     createDate: firebase.firestore.FieldValue.serverTimestamp(),
     updatedDate: firebase.firestore.FieldValue.serverTimestamp(),
-    zwiftId: null // Set zwiftId to null initially
+    zwiftId: null 
   };
 
   const userProfilesRef = firebase.firestore().collection('userProfiles');
