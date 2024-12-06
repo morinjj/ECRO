@@ -3,16 +3,16 @@
 document.addEventListener('DOMContentLoaded', (event) => {
 
     // --- Get references to the sections ---
-    const section1 = document.getElementById('zwift-id-lookup-section'); 
-    const section2 = document.getElementById('zrapp-results-section'); 
-    const section3 = document.getElementById('results-confirmation-section'); 
+    const section1 = document.getElementById('zwift-id-lookup-section');
+    const section2 = document.getElementById('zrapp-results-section');
+    const section3 = document.getElementById('results-confirmation-section');
   
     // --- Hide sections 2 and 3 initially ---
     if (section2) {
-      section2.style.display = 'none'; 
+      section2.style.display = 'none';
     }
     if (section3) {
-      section3.style.display = 'none'; 
+      section3.style.display = 'none';
     }
   
     // --- Function to transition between sections ---
@@ -22,10 +22,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
         fadeOut(currentSection, duration);
   
         nextSection.style.opacity = 0;
-        nextSection.style.display = 'block'; 
+        nextSection.style.display = 'block'; // Or 'flex', 'grid', etc.
         setTimeout(() => {
           fadeIn(nextSection, duration);
-        }, duration / 2); 
+        }, duration / 2); // Adjust delay as needed
       } else {
         console.error("One or both sections not found for transition!");
       }
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     const zwiftIdInput = document.getElementById('zwift-id-input');
     const form = document.getElementById('zwift-id-lookup-form');
   
-    if (form) { 
+    if (form) {
       form.addEventListener('submit', (event) => {
         event.preventDefault();
   
@@ -49,9 +49,32 @@ document.addEventListener('DOMContentLoaded', (event) => {
         console.log("Fetching data...");
   
         // Call the API function from the separate file
-        getZRAppRiderData(zwiftId) 
+        getZRAppRiderData(zwiftId)
           .then(result => {
             console.log('API Response:', result);
+  
+            // --- Update fields in the page ---
+            const riderNameElement = document.getElementById('rider-name-text');
+            const riderCountryElement = document.getElementById('rider-country-text');
+            const riderHeightElement = document.getElementById('rider-height-text');
+            const riderWeightElement = document.getElementById('rider-weight-text');
+            const riderZPCategoryElement = document.getElementById('rider-zp-category-text');
+  
+            if (riderNameElement) {
+              riderNameElement.textContent = result.name.toUpperCase();
+            }
+            if (riderCountryElement) {
+              riderCountryElement.textContent = result.country.toUpperCase();
+            }
+            if (riderHeightElement) {
+              riderHeightElement.textContent = result.height + "cm";
+            }
+            if (riderWeightElement) {
+              riderWeightElement.textContent = result.weight + "kg";
+            }
+            if (riderZPCategoryElement) {
+              riderZPCategoryElement.textContent = result.zpCategory;
+            }
   
             // --- Transition to section 2 after API call ---
             transitionToSection(section1, section2);
@@ -59,7 +82,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             // --- Example: Transition to section 3 after another 3 seconds ---
             setTimeout(() => {
               transitionToSection(section2, section3);
-            }, 3000); 
+            }, 3000); // 3000 milliseconds = 3 seconds
   
           })
           .catch(error => {
@@ -68,16 +91,34 @@ document.addEventListener('DOMContentLoaded', (event) => {
           });
       });
     } else {
-      console.error("Form element not found!"); 
+      console.error("Form element not found!");
     }
   
   });
   
   // --- Fade In/Out Functions ---
   function fadeIn(element, duration) {
-    // ... (fadeIn function code) ...
+    let opacity = 0;
+    const interval = setInterval(() => {
+      opacity += 50 / duration;
+      if (opacity >= 1) {
+        clearInterval(interval);
+        opacity = 1;
+      }
+      element.style.opacity = opacity;
+    }, 50);
   }
   
   function fadeOut(element, duration) {
-    // ... (fadeOut function code) ...
+    let opacity = 1;
+    const interval = setInterval(() => {
+      opacity -= 50 / duration;
+      if (opacity <= 0) {
+        clearInterval(interval);
+        opacity = 0;
+        element.style.display = 'none';
+      }
+      element.style.opacity = opacity;
+    }, 50);
   }
+  // --- End Fade In/Out Functions ---
