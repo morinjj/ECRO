@@ -1,57 +1,66 @@
 document.addEventListener('DOMContentLoaded', (event) => {
 
     // --- Email/Password Sign Up ---
-
     const signupForm = document.getElementById('sign-up-form');
     const errorMessage = document.getElementById('error-message');
-
-    signupForm.addEventListener('submit', (event) => {
-        event.preventDefault();              // Prevent default form submission
-        event.stopImmediatePropagation();    // Prevent Webflow interference
-        errorMessage.textContent = '';       // Clear any previous error messages
-
+  
+    if (signupForm) { 
+      signupForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        errorMessage.textContent = '';
+  
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
-
-        // Create user with email and password using Firebase
+  
         auth.createUserWithEmailAndPassword(email, password)
-            .then((userCredential) => {
-                const user = userCredential.user;
-                console.log('User signed up:', user);
-                // Redirect to the onboarding page
-                window.location.href = 'https://ecro.webflow.io/rider/onboarding';
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                console.error('Sign up error:', errorCode, errorMessage);
-                // Display error message to the user
-                document.getElementById('error-message').textContent = errorMessage;
-            });
-    });
-
+          .then((userCredential) => {
+            console.log('User signed up:', userCredential.user);
+            window.location.href = 'https://ecro.webflow.io/rider/onboarding'; 
+          })
+          .catch((error) => {
+            console.error('Sign up error:', error.code, error.message);
+            errorMessage.textContent = error.message;
+          });
+      });
+    }
+  
+  
     // --- Google Sign-In ---
-
     const googleSignInButton = document.getElementById('google-signin-button');
-
-    googleSignInButton.addEventListener('click', () => {
+  
+    if (googleSignInButton) {
+      googleSignInButton.addEventListener('click', () => {
         const provider = new firebase.auth.GoogleAuthProvider();
-
+  
         auth.signInWithPopup(provider)
-            .then((result) => {
-                const credential = result.credential;
-                const token = credential.accessToken;
-                const user = result.user;
-                console.log('User signed in with Google:', user);
-                // Redirect to the onboarding page
-                window.location.href = 'https://ecro.webflow.io/rider/onboarding';
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                console.error('Google Sign-In error:', errorCode, errorMessage);
-                // Display the error message to the user (if an error message element exists)
-            });
+          .then((result) => {
+            console.log('User signed in with Google:', result.user);
+            window.location.href = 'https://ecro.webflow.io/rider/onboarding'; 
+          })
+          .catch((error) => {
+            console.error('Google Sign-In error:', error.code, error.message);
+            // Handle error (e.g., display an error message)
+          });
+      });
+    }
+  
+    // --- Protect member-only pages ---
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        // User is signed in, allow access to the page
+        console.log("User is signed in:", user.uid);
+  
+        // Optionally, you can perform actions for signed-in users here:
+        // 1. Show personalized content or elements
+        // 2. Hide login/signup elements
+        // 3. Fetch user-specific data from Firebase
+  
+      } else {
+        // User is signed out, redirect to login page
+        console.log("User is signed out, redirecting to login");
+        window.location.href = "/auth/sign-up"; // Replace with your login page URL
+      }
     });
-
-});
+  
+  });
