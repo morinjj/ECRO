@@ -65,15 +65,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
                         } else {
                             const profileData = doc.data();
 
-                            // Check if zrappDataDate exists, is older than 24 hours, AND zwiftId exists
-                            if (profileData.zrappDataDate &&
-                                profileData.zwiftId &&
+                            // Check if zrappDataDate does NOT exist OR is older than 24 hours
+                            if (!profileData.zrappDataDate ||
                                 (new Date() - profileData.zrappDataDate.toDate()) > (24 * 60 * 60 * 1000)) {
 
-                                console.log("ZRApp data is older than 24 hours and zwiftId exists, fetching new data...");
+                                console.log("ZRApp data needs to be fetched (either it doesn't exist or is older than 24 hours)...");
 
-                                // Fetch data from ZRApp API (make sure to pass the zwiftId)
-                                getZRAppRiderData(profileData.zwiftId)
+                                // Fetch data from ZRApp API (make sure to pass the zwiftId if needed)
+                                getZRAppRiderData( /* ... pass any necessary arguments ... */)
                                     .then((zrappData) => {
                                         // Update user profile with new ZRApp data
                                         updateUserProfileWithZrappData(user.uid, zrappData)
@@ -91,7 +90,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                                     });
 
                             } else {
-                                console.log('ZRApp data is up-to-date, zwiftId is missing, or zrappDataDate does not exist.');
+                                console.log('ZRApp data is up-to-date.');
                             }
                         }
                     })
