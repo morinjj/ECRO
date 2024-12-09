@@ -1,3 +1,10 @@
+// pages/rider-profile.js
+
+import { 
+  getRiderData, 
+  updateUserProfile 
+} from '../backend/riderFunctions.js';
+
 document.addEventListener('DOMContentLoaded', (event) => {
   const languageDropdown1 = document.getElementById('language-1-dropdown');
   const languageDropdown2 = document.getElementById('language-2-dropdown');
@@ -125,14 +132,13 @@ document.addEventListener('DOMContentLoaded', (event) => {
         updatedDate: firebase.firestore.FieldValue.serverTimestamp()
       };
 
-      // Update or create the user profile
-      const userProfilesRef = firebase.firestore().collection('userProfiles');
-      userProfilesRef.doc(userId).set(updatedProfileData, { merge: true })
+      // Update the user profile using the function from riderFunctions.js
+      updateUserProfile(userId, updatedProfileData)
         .then(() => {
-          console.log('User profile updated/created successfully!');
+          console.log('User profile updated successfully!');
         })
         .catch(error => {
-          console.error('Error updating/creating user profile:', error);
+          console.error('Error updating user profile:', error);
         });
     });
   }
