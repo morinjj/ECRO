@@ -24,7 +24,7 @@ function createUserProfile(user, firstName = null, lastName = null, profilePhoto
     profilePhotoUrl: profilePhotoUrl,
     createDate: firebase.firestore.FieldValue.serverTimestamp(),
     updatedDate: firebase.firestore.FieldValue.serverTimestamp(),
-    zwiftId: null 
+    zwiftId: null
   };
 
   const userProfilesRef = firebase.firestore().collection('userProfiles');
