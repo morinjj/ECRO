@@ -59,87 +59,53 @@ function formatBaseMarketValue(baseMarketValue) {
 }
 
 /**
- * Attaches an event listener to the contract form to handle the submission.
+ * Handles the contract creation form submission.
  * Collects form data, creates a new contract in Firestore, and updates 
  * the contract with its generated ID.
  */
 function createContract() {
-  const contractForm = document.getElementById('contract-form');
+  // 1. Get the userId
+  const userId = document.getElementById('contract-modal').dataset.userId;
 
-  if (contractForm) {
-    contractForm.addEventListener('submit', (event) => {
-      event.preventDefault();
+  // 2. Get form field values
+  const teamId = "your-team-id"; // Replace with your actual team ID
+  const prizeSharing = document.getElementById('prize-sharing-dropdown').value;
+  const additionalTerms = document.getElementById('additional-terms-input').value;
+  const dateSelector = document.querySelector('#contract-form input[type="date"]');
+  const contractEndDate = dateSelector ? dateSelector.value : null; 
 
-      // Get the userId from the modal's data attribute
-      const userId = document.getElementById('contract-modal').dataset.userId;
-
-      // Get form field values
-      const teamId = "your-team-id"; // Replace with your actual team ID
-      const prizeSharing = document.getElementById('prize-sharing-dropdown').value;
-      const additionalTerms = document.getElementById('additional-terms-input').value;
-      const dateSelector = document.querySelector('#contract-form input[type="date"]');
-      let contractEndDate = dateSelector ? dateSelector.value : null;
-
-      if (!contractEndDate) {
-        alert("Please select a contract end date.");
-        return;
-      }
-
-      contractEndDate = firebase.firestore.Timestamp.fromDate(new Date(contractEndDate));
-
-      // Get the baseMarketValue from the data attribute
-      const contractValue = document.getElementById('contract-value').dataset.baseMarketValue;
-
-      // Create the contract data object
-      const contractData = {
-        userId: userId,
-        teamId: teamId,
-        prizeSharing: prizeSharing,
-        additionalTerms: additionalTerms,
-        contractEndDate: contractEndDate,
-        contractValue: contractValue, // Add baseMarketValue to contract data
-        status: "offered",
-        contractCreatedDate: firebase.firestore.FieldValue.serverTimestamp(),
-        contractStatusDate: firebase.firestore.FieldValue.serverTimestamp()
-      };
-
-      let contractId;
-
-      // Add the contract to Firestore and update with the generated ID
-      db.collection('contracts').add(contractData)
-        .then((docRef) => {
-          contractId = docRef.id;
-          return docRef.update({ contractId: contractId });
-        })
-        .then(() => {
-          console.log("Contract added and updated with ID: ", contractId);
-
-          // Use MutationObserver to wait for the form to be added to the DOM
-          const targetNode = document.getElementById('contract-modal');
-          const config = { childList: true, subtree: true };
-
-          const observer = new MutationObserver((mutationsList, observer) => {
-            for (const mutation of mutationsList) {
-              if (mutation.type === 'childList') {
-                const contractForm = document.getElementById('contract-form');
-                if (contractForm) {
-                  resetContractModal();
-                  observer.disconnect();
-                  break;
-                }
-              }
-            }
-          });
-
-          observer.observe(targetNode, config);
-        })
-        .catch(error => {
-          console.error("Error adding or updating contract:", error);
-        });
-    });
-  } else {
-    console.error("Contract Form not found!");
+  if (!contractEndDate) {
+    alert("Please select a contract end date.");
+    return;
   }
+
+  // 3. Create the contract data object
+  const contractData = {
+    userId: userId,
+    teamId: teamId,
+    prizeSharing: prizeSharing,
+    additionalTerms: additionalTerms,
+    contractEndDate: firebase.firestore.Timestamp.fromDate(new Date(contractEndDate)),
+    contractValue: document.getElementById('contract-value').dataset.baseMarketValue,
+    status: "offered",
+    contractCreatedDate: firebase.firestore.FieldValue.serverTimestamp(),
+    contractStatusDate: firebase.firestore.FieldValue.serverTimestamp()
+  };
+
+  // 4. Add the contract to Firestore
+  let contractId; 
+  db.collection('contracts').add(contractData)
+    .then((docRef) => {
+      contractId = docRef.id;
+      return docRef.update({ contractId: contractId });
+    })
+    .then(() => {
+      console.log("Contract added and updated with ID: ", contractId);
+      resetContractModal(); // Reset the modal after successful submission
+    })
+    .catch(error => {
+      console.error("Error adding or updating contract:", error);
+    });
 }
 
 /**
@@ -148,7 +114,13 @@ function createContract() {
 function resetContractModal() {
   // 1. Clear form fields
   const contractForm = document.getElementById('contract-form');
-  contractForm.reset();
+
+  // Check if contractForm is a valid form element before calling reset
+  if (contractForm && contractForm instanceof HTMLFormElement) {
+    contractForm.reset();
+  } else {
+    console.error("Form element not found or is not a valid form!");
+  }
 
   // 2. Hide any success messages (if you have any)
   // const successMessage = document.getElementById('success-message');
