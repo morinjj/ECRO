@@ -98,6 +98,9 @@ function createContract() {
                 })
                 .then(() => {
                     console.log("Contract added and updated with ID: ", contractId);
+
+                    // Reset the modal
+                    resetContractModal();
                 })
                 .catch(error => {
                     console.error("Error adding or updating contract:", error);
@@ -108,10 +111,29 @@ function createContract() {
     }
 }
 
+/**
+ * Resets the contract creation modal to its initial state.
+ */
+function resetContractModal() {
+    // 1. Clear form fields
+    const contractForm = document.getElementById('contract-form');
+    contractForm.reset();
+
+    // 2. Hide any success messages (if you have any)
+    // const successMessage = document.getElementById('success-message');
+    // if (successMessage) {
+    //   successMessage.style.display = 'none';
+    // }
+
+    // 3. Show the form fields (if you were hiding them)
+    // const formFields = document.getElementById('form-fields');
+    // if (formFields) {
+    //   formFields.style.display = 'block';
+    // }
+
+    // 4. Optionally, reset other modal content (e.g., headings, descriptions)
+    // document.getElementById('modal-title').textContent = "Create New Contract"; 
+}
+
 // Initialize the contract creation functionality
 createContract();
-
-// Make the functions accessible globally (if needed)
-window.openContractCreationModal = openContractCreationModal;
-window.populateContractCreationModal = populateContractCreationModal;
-window.createContract = createContract; 
