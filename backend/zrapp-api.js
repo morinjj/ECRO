@@ -41,7 +41,7 @@ function updateUserProfileWithZrappRiderData(userId, zrappRiderData) {
 
   let baseMarketValue;
   if (ratingMax30 === null && compoundScore === null) {
-    baseMarketValue = 0; 
+    baseMarketValue = 0;
   } else if (ratingMax30 === null) {
     baseMarketValue = compoundScore * 1000;
   } else if (compoundScore === null) {
