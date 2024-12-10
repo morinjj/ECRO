@@ -35,9 +35,26 @@ function updateUserProfileWithZrappRiderData(userId, zrappRiderData) {
     zrappUpdatedDate: firebase.firestore.FieldValue.serverTimestamp()
   };
 
+  // Calculate baseMarketValue, handling null values
+  const ratingMax30 = zrappRiderData.race.max30.rating;
+  const compoundScore = zrappRiderData.power.compoundScore;
+
+  let baseMarketValue;
+  if (ratingMax30 === null && compoundScore === null) {
+    baseMarketValue = 0; 
+  } else if (ratingMax30 === null) {
+    baseMarketValue = compoundScore * 1000;
+  } else if (compoundScore === null) {
+    baseMarketValue = ratingMax30 * 1000;
+  } else {
+    baseMarketValue = ((ratingMax30 + compoundScore) / 2) * 1000;
+  }
+
+  updatedData.baseMarketValue = baseMarketValue;
+
   return userProfilesRef.doc(userId).update(updatedData);
 }
 
-// Make the functions accessible globally (if needed)
+// Make the functions accessible globally
 window.getZrappRiderData = getZrappRiderData;
 window.updateUserProfileWithZrappRiderData = updateUserProfileWithZrappRiderData;
