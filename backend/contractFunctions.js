@@ -64,48 +64,69 @@ function formatBaseMarketValue(baseMarketValue) {
  * the contract with its generated ID.
  */
 function createContract() {
-  // 1. Get the userId
-  const userId = document.getElementById('contract-modal').dataset.userId;
+  const contractForm = document.getElementById('contract-form');
 
-  // 2. Get form field values
-  const teamId = "your-team-id"; // Replace with your actual team ID
-  const prizeSharing = document.getElementById('prize-sharing-dropdown').value;
-  const additionalTerms = document.getElementById('additional-terms-input').value;
-  const dateSelector = document.querySelector('#contract-form input[type="date"]');
-  const contractEndDate = dateSelector ? dateSelector.value : null; 
+  if (contractForm) {
+    contractForm.addEventListener('submit', (event) => {
+      event.preventDefault();
 
-  if (!contractEndDate) {
-    alert("Please select a contract end date.");
-    return;
-  }
+      // Get the userId from the modal's data attribute
+      const userId = document.getElementById('contract-modal').dataset.userId;
 
-  // 3. Create the contract data object
-  const contractData = {
-    userId: userId,
-    teamId: teamId,
-    prizeSharing: prizeSharing,
-    additionalTerms: additionalTerms,
-    contractEndDate: firebase.firestore.Timestamp.fromDate(new Date(contractEndDate)),
-    contractValue: document.getElementById('contract-value').dataset.baseMarketValue,
-    status: "offered",
-    contractCreatedDate: firebase.firestore.FieldValue.serverTimestamp(),
-    contractStatusDate: firebase.firestore.FieldValue.serverTimestamp()
-  };
+      // Get form field values
+      const teamId = "your-team-id"; // Replace with your actual team ID
+      const prizeSharing = document.getElementById('prize-sharing-dropdown').value;
+      const additionalTerms = document.getElementById('additional-terms-input').value;
+      const dateSelector = document.querySelector('#contract-form input[type="date"]');
+      let contractEndDate = dateSelector ? dateSelector.value : null;
 
-  // 4. Add the contract to Firestore
-  let contractId; 
-  db.collection('contracts').add(contractData)
-    .then((docRef) => {
-      contractId = docRef.id;
-      return docRef.update({ contractId: contractId });
-    })
-    .then(() => {
-      console.log("Contract added and updated with ID: ", contractId);
-      resetContractModal(); // Reset the modal after successful submission
-    })
-    .catch(error => {
-      console.error("Error adding or updating contract:", error);
+      if (!contractEndDate) {
+        alert("Please select a contract end date.");
+        return;
+      }
+
+      contractEndDate = firebase.firestore.Timestamp.fromDate(new Date(contractEndDate));
+
+      // Get the baseMarketValue from the data attribute
+      const contractValue = document.getElementById('contract-value').dataset.baseMarketValue;
+
+      // Create the contract data object
+      const contractData = {
+        userId: userId,
+        teamId: teamId,
+        prizeSharing: prizeSharing,
+        additionalTerms: additionalTerms,
+        contractEndDate: contractEndDate,
+        contractValue: contractValue,
+        status: "offered",
+        contractCreatedDate: firebase.firestore.FieldValue.serverTimestamp(),
+        contractStatusDate: firebase.firestore.FieldValue.serverTimestamp()
+      };
+
+      let contractId;
+
+      // Add the contract to Firestore and update with the generated ID
+      db.collection('contracts').add(contractData)
+        .then((docRef) => {
+          contractId = docRef.id;
+          return docRef.update({ contractId: contractId });
+        })
+        .then(() => {
+          console.log("Contract added and updated with ID: ", contractId);
+
+          // Reset the modal
+          resetContractModal();
+
+          // Close the modal
+          closeModal();
+        })
+        .catch(error => {
+          console.error("Error adding or updating contract:", error);
+        });
     });
+  } else {
+    console.error("Contract Form not found!");
+  }
 }
 
 /**
@@ -136,6 +157,16 @@ function resetContractModal() {
 
   // 4. Optionally, reset other modal content (e.g., headings, descriptions)
   // document.getElementById('modal-title').textContent = "Create New Contract"; 
+}
+
+/**
+ * Closes the contract creation modal.
+ */
+function closeModal() {
+  const modal = document.getElementById('contract-modal');
+  if (modal) {
+    modal.style.display = 'none';
+  }
 }
 
 // Make the functions accessible globally (if needed)
