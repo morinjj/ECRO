@@ -22,13 +22,16 @@ async function populateContractCreationModal(userId) {
         if (doc.exists) {
             const userData = doc.data();
 
-            // Set rider name and contract value in the modal
+            // Set rider name in the modal
             document.getElementById('rider-name').textContent = userData.firstName + " " + userData.lastName;
+
             const contractValueElement = document.getElementById('contract-value');
             if (contractValueElement) {
-                contractValueElement.textContent = userData.baseMarketValue;
+                // Format the baseMarketValue
+                const formattedValue = formatBaseMarketValue(userData.baseMarketValue);
+                contractValueElement.textContent = formattedValue;
 
-                // Store the baseMarketValue in a data attribute for later use in form submission
+                // Store the original baseMarketValue in a data attribute 
                 contractValueElement.dataset.baseMarketValue = userData.baseMarketValue;
 
             } else {
@@ -41,6 +44,18 @@ async function populateContractCreationModal(userId) {
     } catch (error) {
         console.error("Error fetching user profile:", error);
     }
+}
+
+/**
+ * Formats the baseMarketValue to display with a $, divided by 1,000,000, 
+ * rounded to 3 decimals, and with an "m" suffix.
+ * @param {number} baseMarketValue - The baseMarketValue to format.
+ * @returns {string} The formatted baseMarketValue string.
+ */
+function formatBaseMarketValue(baseMarketValue) {
+    const valueInMillions = baseMarketValue / 1000000;
+    const roundedValue = valueInMillions.toFixed(3);
+    return "$" + roundedValue + "m";
 }
 
 /**
