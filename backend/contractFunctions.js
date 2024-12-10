@@ -150,9 +150,6 @@ function resetContractModal() {
     // document.getElementById('modal-title').textContent = "Create New Contract"; 
 }
 
-// Initialize the contract creation functionality
-createContract();
-
 // Make the functions accessible globally (if needed)
 window.openContractCreationModal = openContractCreationModal;
 window.populateContractCreationModal = populateContractCreationModal;
