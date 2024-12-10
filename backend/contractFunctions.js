@@ -152,3 +152,8 @@ function resetContractModal() {
 
 // Initialize the contract creation functionality
 createContract();
+
+// Make the functions accessible globally (if needed)
+window.openContractCreationModal = openContractCreationModal;
+window.populateContractCreationModal = populateContractCreationModal;
+window.createContract = createContract; 
